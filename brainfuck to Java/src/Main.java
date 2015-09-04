@@ -2,6 +2,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 //Test
 
@@ -9,23 +10,38 @@ public class Main {
 	public static final String FILENAME = "code.txt";
 	
 	public static void main(String[] args) {
-		List<Character> program = null;
+		String program = null;
+		System.out.println("1 - Read from file\n2 - Read from user");
+		Scanner in = new Scanner(System.in);
 		
-		try(FileReader reader = new FileReader(FILENAME)) {
-			program = new ArrayList<Character>();
-			
-			for(int characterRead = reader.read(); characterRead != -1; characterRead = reader.read()) {
-				program.add((char) characterRead);	
+		int val = in.nextInt();
+		in.nextLine();
+		
+		if(val == 1) {
+			System.out.print("\nReading from file: ");
+			StringBuilder tempProgram = new StringBuilder();
+				
+			try(FileReader reader = new FileReader(FILENAME)) {			
+				for(int characterRead = reader.read(); characterRead != -1; characterRead = reader.read()) {
+					tempProgram.append((char) characterRead);	
+				}
+			} catch (IOException exception) {
+				System.err.printf("Could not open file «%s».\nAre you sure it exists?\n", FILENAME);
+				System.exit(-1);
 			}
-		} catch (IOException exception) {
-			System.err.printf("Could not open file «%s».\nAre you sure it exists?\n", FILENAME);
-			System.exit(-1);
+		} else if(val == 2) {
+			System.out.print("\nReading from user: ");
+			program = in.nextLine();
+		} else {
+			System.err.println("Invalid option selected.");
+			System.exit(-2);
 		}
 		
 		BrainfuckInterpreter interpreter = new BrainfuckInterpreter(program);
+		System.out.printf("%n--[Now running program «%s»]--%n", interpreter.getProgram());
 		interpreter.run();
 		
-		System.out.printf("\n--[Characters read ended in the line above]--\n\n");
+		System.out.println("\n--[Characters read ended in the line above]--");
 	}
 
 }

@@ -1,4 +1,5 @@
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -8,11 +9,13 @@ import java.util.Stack;
 public class BrainfuckInterpreter {
 	public final static int MEMORY_SIZE = 8192;
 	
-	private final List<Character> program;
+	private final char[] program;
+	private final String programAsString;
 	private final byte[] memory = new byte[MEMORY_SIZE];
 	private final Stack<Pair> parentheses = new Stack<Pair>();
 	private int PC = 0, pointer = 0;
-	private Scanner userInput = new Scanner(System.in);
+	private InputStream inputStream = System.in;
+	private Scanner userInput = new Scanner(inputStream);
 	private PrintStream programOutput = System.out;
 	
 	//this is a struct
@@ -20,18 +23,15 @@ public class BrainfuckInterpreter {
 		public int head, tail;
 	}
 	
-	public BrainfuckInterpreter(List<Character> program) {
-		this.program = program;
+	public BrainfuckInterpreter(String program) {
+		//give it up for lazy regex
+		programAsString = program.replaceAll("[^\\+\\-\\>\\<\\,\\.\\]\\[]", "");
+		this.program = programAsString.toCharArray();
 	}
 
 	public void run() {		
-		while(PC < program.size()) {
-			parse(program.get(PC));
-		}
-		
-		//apparently useless
-		if(!parentheses.empty()) {
-			throw new RuntimeException(parentheses.size() + " unmatched parentheses found!");
+		while(PC < program.length) {
+			parse(program[PC]);
 		}
 	}
 	
@@ -71,7 +71,7 @@ public class BrainfuckInterpreter {
 			++PC;
 			break;
 		case '.':
-			programOutput.printf("%c", (char) memory[pointer]);
+			programOutput.print((char) memory[pointer]);
 			
 			++PC;
 			break;
@@ -98,7 +98,7 @@ public class BrainfuckInterpreter {
 				}
 				
 				//System.out.println("PC: " + PC + " program: " + program.get(PC) + " pointer: " + pointer + " memory: " + memory[pointer]);
-				parse(program.get(PC));
+				parse(program[PC]);
 			}//se o PC estiver a tentar fugir, imba parens miss]
 			
 			PC = parentheses.pop().tail + 1;
@@ -114,12 +114,25 @@ public class BrainfuckInterpreter {
 		}
 	}
 	
-	public void setInputStream(InputStream in) {
-		userInput = new Scanner(in);
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+		userInput = new Scanner(inputStream);
+	}
+	
+	public InputStream getInputStream() {
+		return inputStream;
 	}
 	
 	public void setOutputStream(PrintStream out) {
 		programOutput = out;
+	}
+	
+	public OutputStream getOutputStream() {
+		return programOutput;
+	}
+	
+	public String getProgram() {
+		return programAsString;
 	}
 	
 }
