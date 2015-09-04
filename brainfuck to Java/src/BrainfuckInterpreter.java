@@ -2,7 +2,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -25,7 +24,7 @@ public class BrainfuckInterpreter {
 	
 	public BrainfuckInterpreter(String program) {
 		//give it up for lazy regex
-		programAsString = program.replaceAll("[^\\+\\-\\>\\<\\,\\.\\]\\[]", "");
+		programAsString = program.replaceAll("[^-><,\\+\\.\\[\\]]", "");
 		this.program = programAsString.toCharArray();
 	}
 
