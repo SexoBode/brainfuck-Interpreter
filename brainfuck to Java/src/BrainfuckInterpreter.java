@@ -5,7 +5,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Stack;
 
-public class BrainfuckInterpreter {
+public class BrainfuckInterpreter implements Runnable {
 	public final static int MEMORY_SIZE = 8192;
 	
 	private final char[] program;
@@ -103,8 +103,8 @@ public class BrainfuckInterpreter {
 			break;
 		case ']'://if stack empty, throw imba parens miss [
 			parentheses.peek().tail = PC;
-			
-			PC = parentheses.peek().head;
+
+			PC = parentheses.pop().tail + 1;	//ruins everything if it's the first command in the program
 			break;
 		default:
 			++PC;
