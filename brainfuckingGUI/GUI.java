@@ -83,6 +83,7 @@ public class GUI {
 	}
 
 	//Does not receive characters/bytes from the propers fields, prints output to System.out and not text area
+	//middle frame might go to hell if both scrollpanes' scroll things come up at the same time
 	/**
 	 * Initialize the contents of the frame.
 	 */
