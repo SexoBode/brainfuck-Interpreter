@@ -23,7 +23,6 @@ public class BrainfuckInterpreter {
 	}
 	
 	public BrainfuckInterpreter(String program) {
-		//give it up for lazy regex
 		programAsString = program.replaceAll("[^-><,\\+\\.\\[\\]]", "");
 		this.program = programAsString.toCharArray();
 	}
