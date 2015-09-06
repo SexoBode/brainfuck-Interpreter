@@ -1,3 +1,4 @@
+package brainfuckingGUI;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -99,12 +100,12 @@ public class BrainfuckInterpreter implements Runnable {
 				parse(program[PC]);
 			}//se o PC estiver a tentar fugir, imba parens miss]
 			
-			PC = parentheses.pop().tail + 1;
+			PC = parentheses.pop().tail + 1;	//ruins everything if it's the first command in the program
 			break;
 		case ']'://if stack empty, throw imba parens miss [
 			parentheses.peek().tail = PC;
-
-			PC = parentheses.pop().tail + 1;	//ruins everything if it's the first command in the program
+			
+			PC = parentheses.peek().head;
 			break;
 		default:
 			++PC;
