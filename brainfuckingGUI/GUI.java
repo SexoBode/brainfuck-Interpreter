@@ -61,7 +61,6 @@ public class GUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-//					GUI window = new GUI();
 					window.frame.pack();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
@@ -70,9 +69,6 @@ public class GUI {
 			}
 		});
 		
-//		while(true) {
-//			System.out.printf("Window width: %d, Window length: %d%n", window.frame.getWidth(), window.frame.getHeight());
-//		}
 	}
 
 	/**
@@ -82,12 +78,9 @@ public class GUI {
 		initialize();
 	}
 
-	//Does not receive characters/bytes from the propers fields, prints output to System.out and not text area
-	//middle frame might go to hell if both scrollpanes' scroll things come up at the same time
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	//perhaps add a "Status" text field, separate from the output
 	@SuppressWarnings("serial")
 	private void initialize() {
 		frame = new JFrame("Brainfuck Interpreter");
@@ -254,8 +247,6 @@ public class GUI {
 		});
 		fileMenu.add(openFileMenuItem);
 		
-		//não grava linhas (só está a receber ASCII 10)
-		//não grava bem se metermos save "f" em vez de f.txt
 		saveCodeMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser saveFile = new JFileChooser(System.getProperty("user.home"));
@@ -272,33 +263,26 @@ public class GUI {
 				if(returnedValue == JFileChooser.APPROVE_OPTION) {
 					Thread fileSaverThread = new Thread(new Runnable() {
 						public void run() {
-							File codeFile = saveFile.getSelectedFile();
+							StringBuilder codeFileName = new StringBuilder(saveFile.getSelectedFile().getAbsolutePath());
 							
-							System.out.println("Before: " + codeFile.getName());
-							
-							//thanks short-circuiting
-							if(codeFile.getName().lastIndexOf(".") == -1 || !codeFile.getName().substring(codeFile.getName().lastIndexOf(".")).equals(".txt")) {
-								codeFile = new File(codeFile.getName() + ".txt");
+							if(codeFileName.lastIndexOf(".") == -1 || !codeFileName.substring(codeFileName.lastIndexOf(".")).equals(".txt")) {
+								codeFileName.append(".txt");
 							}
 							
-							System.out.println("After: " + codeFile.getName());
+							File codeFile = new File(codeFileName.toString());
 							
 							try(FileWriter writer = new FileWriter(codeFile)) {
-//								String temp = codeTextArea.getText().replace("\\n", "\\r\\n");	//NOT PORTABLE!!
-//								for(int i = 0; i < temp.length(); ++i) {
-//									System.out.print((int) temp.charAt(i) + " ");
-//								}
+								//codeTextArea's linebreaks are all \n, which is not compatible with some platforms
+								String linebrokenText = codeTextArea.getText().replace("\n", System.getProperty("line.separator"));	//could be microoptimised to be avoided on systems which accept \n as a linebreak
 
-								System.out.println("After: " + codeFile.getName());
-								writer.write(codeTextArea.getText());
+								writer.write(linebrokenText);
 								writer.flush();	//Always good practice, even if it doesn't do anything!
 
-								System.out.println("After: " + codeFile.getName());
 								lastFileHandled = codeFile;
 							} catch (IOException exception) {
-								outputTextArea.setText("Failed to save " + codeFile.getName());
+								EventQueue.invokeLater(() -> outputTextArea.setText("Failed to save " + codeFile.getName()));
+//								outputTextArea.setText("Failed to save " + codeFile.getName());
 							}
-							System.out.println("After: " + codeFile.getName());
 						}
 					});
 					
